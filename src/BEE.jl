@@ -2,7 +2,7 @@ module BEE
 
 import Base: -, +, *, sum, max, min, ==, <, <=, !=, >, >=
 
-export BeeInt, BeeBool, BeeModel, @beeint
+export BeeInt, BeeBool, BeeModel, @beeint, @beebool, beeint, beebool
 
 # Abstract types
 #
@@ -316,9 +316,16 @@ end
 
 macro beeint(name, lo, hi) 
     return quote
-        $(esc(name)) = BeeInt(String($name), $lo, $hi)
+        $(esc(name)) = BeeInt($(String(name)), $lo, $hi)
     end
 end
+beeint(name, lo, hi) = BeeInt(name, lo, hi)
 
+macro beebool(name)
+    return quote
+        $(esc(name)) = BeeBool($(String(name)))
+    end
+end
+beebool(name) = BeeBool(name)
 
 end

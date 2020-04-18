@@ -275,7 +275,40 @@ First install `BEE.jl` by typing this in `Julia REPL`.
 using Pkg; Pkg.add("git@github.com:newptcai/BEE.jl.git")
 ```
 Then run the following code
+```Julia
+using BEE
+
+@beeint x  0 5
+@beeint y -4 9
+@beeint z -5 10
+
+x + y == z
+
+@beeint w 0 10
+
+xl = [beebool("x$i") for i=1:4]
+
+xl[1] == -xl[2]
+xl[2] == true
+
+sum([-xl[1], xl[2], -xl[3], xl[4]]) == w
+
+BEE.render()
 ```
+You will get output like this
+```Julia
+new_int(w, 0, 10)
+new_int(x, 0, 5)
+new_int(z, -5, 10)
+new_int(y, -4, 9)
+new_bool(x1)
+new_bool(x4)
+new_bool(x2)
+new_bool(x3)
+int_plus(x, y, z)
+bool_eq(x1, -x2)
+bool_eq(x2, true)
+bool_array_sum_eq(([-x1, x2, -x3, x4], w))
 ```
 
 ## Acknowledgement
