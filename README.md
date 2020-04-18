@@ -307,7 +307,7 @@ xl[2] == true
 
 sum([-xl[1], xl[2], -xl[3], xl[4]]) == w
 
-BEE.render()
+print(BEE.render())
 ```
 You will get output like this
 ```Julia

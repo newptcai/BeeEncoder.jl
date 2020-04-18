@@ -2,7 +2,7 @@ module BEE
 
 import Base: -, +, *, sum, max, min, ==, <, <=, !=, >, >=
 
-export BeeInt, BeeBool, BeeModel, @beeint, @beebool, beeint, beebool
+export BeeInt, BeeBool, BeeModel, @beeint, @beebool, beeint, beebool, render
 
 # Abstract types
 #
