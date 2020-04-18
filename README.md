@@ -1,69 +1,79 @@
-# BEE
+# Using `BEE` and `BEE.jl` to solve combinatorial problems
 
 [![Build Status](https://travis-ci.com/newptcai/BEE.jl.svg?branch=master)](https://travis-ci.com/newptcai/BEE.jl)
 
-# Using `BEE` and `BEE.jl` to solve combinatorial problems
+*This article is about my Julia interface package [`BEE.jl`](https://github.com/newptcai/BEE.jl) for
+using [`BEE` (Ben-Gurion University Equi-propagation
+Encoder)](http://amit.metodi.me/research/bee/) by [Amit Metodi](http://amit.metodi.me/)*
+
+## The beauty of brute force 🤜️
+
+Modern [SAT](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem) solver are often capable
+of handling problems with *HUGE* size. They have been successfully applied to many combinatorics
+problems. Communications ACM has an article titled [The Science of Brute
+Force](https://cacm.acm.org/magazines/2017/8/219606-the-science-of-brute-force/fulltext) on how the
+[Boolean Pythagorean Triples problem](https://www.cs.utexas.edu/~marijn/publications/ptn.pdf) was
+solved with an SAT solver.  Another well-known example is [Paul Erdős Discrepancy
+Conjecture](https://www.quantamagazine.org/terence-taos-answer-to-the-erdos-discrepancy-problem-20151001/),
+which was [initially attacked with the help of computer](https://arxiv.org/pdf/1402.2184.pdf).
+
+<center>
+![Brute force](images/egg-power.jpg)
+</center>
+
+Thus it is perhaps beneficial 🥦️ for anyone who is interested in combinatorics 🀄️ to learn how to
+use the beautiful brute force 🤜️ of SAT solvers. Doing experiments with SAT solver can search much
+bigger space than pencil and paper.  New patterns can be spotted. Conjectures can be proved or
+disapproved.
+
+However, combinatorial problems are often difficult to encode into CNF formulas, which can only
+contain boolean variables. So integers must be represented by such boolean variables with some
+encoding scheme. Doing so manually can be very tedious 😑️.
+
+Of course you can use solvers which go beyond CNF. For example Microsoft has a
+[`Z3`](https://github.com/Z3Prover/z3) theorem proved. You can solve many more types of problems
+with it. But if the size of your problem matters, pure CNF solver is still way much faster 🚀️.
 
 ## What is `BEE` 🐝️
 
-Modern [SAT](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem) solver are often capable
-of handling problem with huge size. They have been successfully applied to investigate combinatorics
-problem with finite search space.  Communications ACM has an article [The Science
-of Brute Force](https://cacm.acm.org/magazines/2017/8/219606-the-science-of-brute-force/fulltext)
-about how the [Boolean Pythagorean Triples
-problem](https://www.cs.utexas.edu/~marijn/publications/ptn.pdf) was solved with SAT solver, and Quanta
-magazine tells the
-[story](https://www.quantamagazine.org/terence-taos-answer-to-the-erdos-discrepancy-problem-20151001/)
-of [Paul Erdős Discrepancy Conjecture](https://arxiv.org/abs/1402.2184), in which SAT solver also played a
-part.
-Thus it is perhaps beneficial 🥦️ for anyone who is interested in combinatorics 🀄️ to learn how to
-use SAT solvers. Doing experiments with SAT solver can help to spot patterns, make or disprove
-conjectures.
 
+One project that tries to ease using SAT solvers is [`BEE` (Ben-Gurion
+University Equi-propagation Encoder)](http://amit.metodi.me/research/bee/), which
 
-However, many problems are difficult to encode into CNF formulas, which can only contain boolean
-variables. So integers must be resented by such variables with some encoding scheme. Doing so
-manually can be very tedious 😑️.  One project that tries to address this problem is [`BEE` (Ben-Gurion
-University Equi-propagation Encoder)](http://amit.metodi.me/research/bee/)
-
-> ... a
+> ... is a
 > compiler which enables to encode finite domain constraint problems to CNF. During compilation, `BEE`
 > applies optimizations which include equi-propagation (see paper), partial-evaluation, and a careful
 > selection of encoding techniques per constraint, depending on various parameters of the constraint.
 
-From my experiments, `BEE` has a good balance of expressive power and performance. It also comes with
-a solver, but you can combine with any solver that supports CNF, which means most of them. Thus you
-can experiment with different solvers to see which deals with your problem.
+From my experiments, `BEE` has a good balance of expressive power and performance.
 
-## How I use `BEE`
+## Many ways to use `BEE` 🤔️
 
 `BEE` is written in `[Prolog](https://en.wikipedia.org/wiki/Prolog)`. So you either have to learn
-`Prolog`, or you can 
-1. write your problem in a format defined by `BEE`, 
+`Prolog`, or you can
+1. encode your problem in a syntax defined by `BEE`,
 2. use a program `BumbleBEE` that comes with the package to solve it directly with `BEE`
-3. use `BumbleBEE` to compile your problem to [DIMACS CNF file](https://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html), which can be solved by the numerous
+3. or use `BumbleBEE` to compile your problem to a [DIMACS CNF file](https://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html), which can be solved by the numerous
    SAT solvers out there.
-My choice is the second approach (since I have learned probably way too many programming languages
-now 😥️). But I use [Julia](https://julialang.org/) to facilitate generating `BumbleBEE` code. Thus
-comes my Julia package [`BEE.jl`](https://github.com/newptcai/BEE.jl).
+
+My choice is to use [Julia](https://julialang.org/) to convert combinatorics problems into
+`BumbleBEE` code and this is why I wrote the package [`BEE.jl`](https://github.com/newptcai/BEE.jl).
 
 Here's my workflow for smaller problems
 
     Julia code --(BEE.jl)--> BEE code --(BumbleBEE)--> solution/unsatisfiable
 
-When the problem is getting bigger, 
+When the problem is getting bigger, I try
 
-    Julia code --(BEE.jl)--> BEE code -- (BumbleBEE)--+ 
-                                                      |
-        +---------------------------------------------+
-        |
-        v
-    DIMACS CNF --(SAT Solver)-+-> unsatisfiable
-                              |
-                              +-> CNF solution --(BumbleSol)--> BEE solution
-                              
-In rest of this article, I will mostly describe how to use `BEE` 😀️. You do not need to know any
-`Julia` to understand this part. I will only briefly mention what my package `BEE.jl` does by the
+    Julia code --(BEE.jl)--> BEE code -- (BumbleBEE)--> CNF --(SAT Solver)
+                                                                   |
+        +-------------------------+--------------------------------+
+        |                         |
+        v                         v
+    unsatisfiable          CNF solution --(BumbleSol)--> BEE solution
+
+In the rest of this article, I will mostly describe how to use `BEE` 😀️. You do not need to know any
+Julia to understand this part. I will only briefly mention what `BEE.jl` does by the
 end.
 
 ## `BEE` and SAT solver for beginners
@@ -72,9 +82,9 @@ end.
 
 I ran into some difficulties when I tried to compile [2017 version of
 `BEE`](http://amit.metodi.me/research/bee/bee20170615.zip). Here is how to do it correctly on
-*`Ubuntu`*. Other `Linux` system should work in similar ways.
+Ubuntu. Other Linux system should work in similar ways.
 
-First install `swi-rpolog`. You can do this in a terminal by
+First install `swi-prolog`. You can do this in a terminal by
 ```
 sudo apt install swi-prolog
 ```
@@ -101,18 +111,18 @@ cd ../beeSolver/ && make
 ```
 If you succeed, you will be able to find `BumbleBEE` and `BumbleSol` one directory above by
 ```
-cd .. ; ls
+cd .. && ls
 ```
 And you should see these files
 ```
 bApplications  beeSolver  BumbleSol        pl-satsolver.so  satsolver
 beeCompiler    BumbleBEE  Constraints.pdf  README.txt       satsolver_src
 ```
-
 ### Using `BumbleBEE`
 
-Assuming that you are still in the folder where `BumbleBEE` is, you can find examples of `BumbleBEE`
-problems in the folder `beeSolver/bExamples`. A very simple example is the following `ex_sat.bee`.
+We can now give `BEE` a try 😁️.  You can find examples of `BumbleBEE` problems in the folder
+`beeSolver/bExamples`. A very simple one is the following
+`ex_sat.bee`.
 ```
 new_int(x,0,5)
 new_int(y,-4,9)
@@ -161,8 +171,9 @@ x4 = false
 ```
 You can check that all the constraints are satisfied.
 
-<font size="+2">⚠️ </font> But here is a caveat -- you must run `BumbleBEE` with the current directory set at where the file
-`BumbleBEE` is. You cannot use any other directory. For example if you try
+<font size="+2">⚠️ </font> But here is a caveat -- you must run `BumbleBEE` with the current
+directory `PWD` set to be where the file
+`BumbleBEE` is. You cannot use any other directory 🤦. For example if you try
 ```
 && bee20170615/BumbleBEE bee20170615/beeSolver/bExamples/ex_sat.bee
 ```
@@ -170,12 +181,12 @@ You will only get error messages.
 
 ### Convert the problem to CNF
 
-As I mentioned above, you can also compile your problem into CNF DIMACS format. For example
+As I mentioned earlier, you can also compile your problem into CNF DIMACS format. For example
 ```
 /BumbleBEE beeSolver/bExamples/ex_sat.bee -dimacs ./ex_sat.cnf ./ex_sat.map
 ```
-will create two files `ex_sat.cnf` and `ex_sat.map` in the current folder. The top few lines of
-`ex_sat.cnf` looks like this.
+will create two files `ex_sat.cnf` and `ex_sat.map`. The top few lines of
+`ex_sat.cnf` looks like this
 ```
 c DIMACS File generated by BumbleBEE
 p cnf 37 189
@@ -190,37 +201,39 @@ p cnf 37 189
 ```
 A little bit explanation for the first 4 lines
 
-1. A with `c` at the beginning is a comment. 
-2. The line with `p`  says that this is a CNF formula with `37` variables and `189` clauses. 
+1. A line with `c` at the beginning is a comment.
+2. The line with `p`  says that this is a CNF formula with `37` variables and `189` clauses.
 3. `1 0` is a clause which says that variable `1` must be true. `0` is symbol to end a
   clause.
 4. `-6 5` means either the negate of variable `6`  is true or variable `5` is true ...
 
-As you can see, with integers in the problem, even our modest toy example needs a large numbers of
-boolean variables. Thus most of the time it is not really feasible to write such CNF files manually.
+As you can see, with integers are needed, even a toy problem needs a large numbers of
+boolean variables. This is why efficient coding of integers are critical. And this is where `BEE`
+helps.
 
-Now you can try your favourite SAT solver on the problem. I often choose
-[`CryptoMiniSat`](https://www.msoos.org/cryptominisat5/). Assuming that you have it installed, you
+Now you can try your favourite SAT solver on the problem. I often use
+[`CryptoMiniSat`](https://www.msoos.org/cryptominisat5/). Assuming that you have it on your `PATH`, you
 can now use
 ```
-cryptominisat5 ex_sat.cnf > ex_sa.sol
+cryptominisat5 ex_sat.cnf > ex_sat.sol
 ```
 to solve the problem and save the solution into a file `ex_sat.sol`. Most of `ex_sat.sol` are
 comments except the last 3 lines
 ```
 s SATISFIABLE
-v 1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 -13 -14 -15 -16 -17 -18 -19 -20 -21 -22 
+v 1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 -13 -14 -15 -16 -17 -18 -19 -20 -21 -22
 v -23 -24 -25 -26 -27 -28 -29 -30 -31 -32 -33 34 -35 -36 -37 0
 ```
-It says the problem is satisfiable and one solution is given. A number in the line starting with an `v` 
-means a variables, without a `-` sign in front of it, it has value `true` otherwise it is `false`.
+It says the problem is satisfiable and one solution is given. A number in the line starting with an `v`
+means a variables. Without a `-` sign in front of it, a variable is assigned the value `true`
+otherwise it is assigned `false`.
 
 <font size="+2">⚠️ </font> To get back to a solution to `BEE` variables, we use `BumbleSol`, which is
-at the same folder as `BumbleBEE`. But `BumbleSol` needs bit help. Remove the starting `s` and `v`
-in the `ex_sat.sol`. So the last 3 lines should look like this
+at the same folder as `BumbleBEE`. But `BumbleSol` needs bit help 😑️. Remove the starting `s` and `v`
+in the `ex_sat.sol` to make it like this
 ```
 SATISFIABLE
-1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 -13 -14 -15 -16 -17 -18 -19 -20 -21 -22 
+1 -2 -3 -4 -5 -6 -7 -8 -9 -10 -11 -12 -13 -14 -15 -16 -17 -18 -19 -20 -21 -22
 -23 -24 -25 -26 -27 -28 -29 -30 -31 -32 -33 34 -35 -36 -37 0
 ```
 Then we can run
@@ -234,7 +247,7 @@ and get
 %   ^^^            by Amit Metodi       / \_/ \_/ \
 %
 %  reading Dimacs solution file ... done
-%  reading and decoding BEE map file ... 
+%  reading and decoding BEE map file ...
 x = 0
 y = -4
 z = -4
@@ -247,13 +260,14 @@ x4 = false
 ==========
 ```
 
-That's it! Now you know how to use `BEE`! 🐝️
+That's it! Now you know how to use `BEE` 🐝️! Have fan with your problem 🤣️.
 
 ### Choice of SAT solver
 
 Some top-level SAT solvers are
 
-* [CaDical](https://github.com/arminbiere/cadical) -- Winner of [2019 SAT Race](http://sat-race-2019.ciirc.cvut.cz/). Tend to be
+* [CaDical](https://github.com/arminbiere/cadical) -- Winner of [2019 SAT
+  Race](http://sat-race-2019.ciirc.cvut.cz/). Tends to be
   fastest in dealing with solvable problems.
 * [Lingeling, Plingeling and Treengeling](http://fmv.jku.at/lingeling/) -- Good at parallelization.
 * [Painless](https://www.lrde.epita.fr/wiki/Painless) -- Uses a divide and conquer strategy for
@@ -262,12 +276,12 @@ Some top-level SAT solvers are
   found any documents of it.
 
 My experience is that all these SAT solvers have similar performance. It is always more important to
-try to encode your problem better than picking an SAT solver.
+try to encode your problem better.
 
 ## How to use `BEE.jl`
 
 When your problems becomes bigger, you don't want to write all BEE code manually. Here's what
-`BEE.jl` may help. You can code your problem in `Julia`, and `BEE.jl` will convert it to `BEE`.
+`BEE.jl` may help. You can write your problem in Julia, and `BEE.jl` will convert it to `BEE` syntax.
 Here's how to do the example above with `BEE.jl`
 
 First install `BEE.jl` by typing this in `Julia REPL`.
@@ -310,10 +324,14 @@ bool_eq(x1, -x2)
 bool_eq(x2, true)
 bool_array_sum_eq(([-x1, x2, -x3, x4], w))
 ```
+Exactly as above.
 
-## Acknowledgement
+## Acknowledgement 🙏️
+
+I want to thank all the generous ❤️  people who have spend their time to create these amazing SAT
+solvers and made them freely available to everyone.
 
 By writing this module, I have learn quite a great deal of Julia and its convenient meta-programming
 features.  I want to thank everyone on GitHub and [Julia Slack channel](https://slackinvite.julialang.org/) who has helped me, in
 particular Alex Arslan, [David Sanders](https://github.com/dpsanders), Syx Pek, and [Jeffrey
-Sarnoff](https://github.com/JeffreySarnoff)
+Sarnoff](https://github.com/JeffreySarnoff).
