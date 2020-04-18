@@ -18,13 +18,13 @@ Conjecture](https://www.quantamagazine.org/terence-taos-answer-to-the-erdos-disc
 which was [initially attacked with the help of computer](https://arxiv.org/pdf/1402.2184.pdf).
 
 <p align="center">
-<img src="images/egg-power.jpg" alt="Brute force"/>
+<img src="images/egg-power.jpg" alt="Brute force" width="450" />
 </p>
 
 Thus it is perhaps beneficial 🥦️ for anyone who is interested in combinatorics 🀄️ to learn how to
-use the beautiful brute force 🤜️ of SAT solvers. Doing experiments with SAT solver can search much
-bigger space than pencil and paper.  New patterns can be spotted. Conjectures can be proved or
-disapproved.
+harness the beautiful brute force 🔨 of SAT solvers. Doing experiments with SAT solver can search much
+bigger space than pencil and paper.  New patterns can be spotted 👁️. Conjectures can be proved or
+disapproved 🎉️.
 
 However, combinatorial problems are often difficult to encode into CNF formulas, which can only
 contain boolean variables. So integers must be represented by such boolean variables with some
