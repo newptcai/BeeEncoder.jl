@@ -17,9 +17,7 @@ solved with an SAT solver.  Another well-known example is [Paul Erdős Discrepan
 Conjecture](https://www.quantamagazine.org/terence-taos-answer-to-the-erdos-discrepancy-problem-20151001/),
 which was [initially attacked with the help of computer](https://arxiv.org/pdf/1402.2184.pdf).
 
-<center>
 ![Brute force](images/egg-power.jpg)
-</center>
 
 Thus it is perhaps beneficial 🥦️ for anyone who is interested in combinatorics 🀄️ to learn how to
 use the beautiful brute force 🤜️ of SAT solvers. Doing experiments with SAT solver can search much
