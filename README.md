@@ -1,6 +1,6 @@
 # Using `BEE` and `BEE.jl` to solve combinatorial problems
 
-[![Build Status](https://travis-ci.org/newptcai/BEE.jl.svg?branch=0.1.1)](https://travis-ci.org/newptcai/BEE.jl)
+[![Build Status](https://travis-ci.org/newptcai/BEE.jl.svg?branch=master)](https://travis-ci.org/newptcai/BEE.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *This article is about my Julia interface package [`BEE.jl`](https://github.com/newptcai/BEE.jl) for
