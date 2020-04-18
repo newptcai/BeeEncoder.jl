@@ -332,6 +332,6 @@ I want to thank all the generous ❤️  people who have spend their time to cre
 solvers and made them freely available to everyone.
 
 By writing this module, I have learn quite a great deal of Julia and its convenient meta-programming
-features.  I want to thank everyone on GitHub and [Julia Slack channel](https://slackinvite.julialang.org/) who has helped me, in
+features.  I want to thank everyone 💁 on GitHub and [Julia Slack channel](https://slackinvite.julialang.org/) who has helped me, in
 particular Alex Arslan, [David Sanders](https://github.com/dpsanders), Syx Pek, and [Jeffrey
 Sarnoff](https://github.com/JeffreySarnoff).
