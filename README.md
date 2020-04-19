@@ -189,7 +189,7 @@ You will only get error messages.
 
 As I mentioned earlier, you can also compile your problem into CNF DIMACS format. For example
 ```shell
-/BumbleBEE beeSolver/bExamples/ex_sat.bee -dimacs ./ex_sat.cnf ./ex_sat.map
+./BumbleBEE beeSolver/bExamples/ex_sat.bee -dimacs ./ex_sat.cnf ./ex_sat.map
 ```
 will create two files `ex_sat.cnf` and `ex_sat.map`. The top few lines of
 `ex_sat.cnf` looks like this
