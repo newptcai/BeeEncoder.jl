@@ -16,4 +16,4 @@ branches:
   except:
     - dev
 after_success:
-- julia -e 'cd(Pkg.dir("BEE")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+- julia -e 'using Pkg; cd(Pkg.dir("BEE")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
