@@ -134,9 +134,26 @@ end
 
         xl = [beebool("x$i") for i in 1:3]
 
-        il = [beeint("i$i") for i in 1:3]
+        il = [beebool("i$i") for i in 1:3]
+
+        @beebool b
 
         c = (xl == il) == true
         @test "bool_arrays_eq([x1, x2, x3], [i1, i2, i3])\n" == capture_render(c)
+
+        c = (xl != il) == true
+        @test "bool_arrays_neq([x1, x2, x3], [i1, i2, i3])\n" == capture_render(c)
+
+        c = (xl <= il) == true
+        @test "bool_arrays_lex([x1, x2, x3], [i1, i2, i3])\n" == capture_render(c)
+
+        c = (xl < il) == true
+        @test "bool_arrays_lexLt([x1, x2, x3], [i1, i2, i3])\n" == capture_render(c)
+
+        c = (xl <= il) == b
+        @test "bool_arrays_lex_reif([x1, x2, x3], [i1, i2, i3], b)\n" == capture_render(c)
+
+        c = (xl < il) == b
+        @test "bool_arrays_lexLt_reif([x1, x2, x3], [i1, i2, i3], b)\n" == capture_render(c)
     end
 end

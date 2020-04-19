@@ -420,7 +420,7 @@ for (ET, EF, OP) in bool2arrayOP
         rhs::Array{BeeBoolean, 1}
     end
 
-    $OP(lhs::Array{1, T} where T <: BB, rhs::Array{1, T} where T <: BB) = $ET(lhs, rhs)
+    $OP(lhs::Array{T, 1} where T <: BB, rhs::Array{T, 1} where T <: BB) = $ET(lhs, rhs)
 
     (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeBoolean)
