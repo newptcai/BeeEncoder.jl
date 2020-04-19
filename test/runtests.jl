@@ -99,8 +99,8 @@ end
         c = x3 == alldiff([x1, x2])
         @test "int_array_allDiff_reif([x1, x2], x3)\n" == capture_render(c)
 
-        #c = x1 * x2 == x3
-        #@test "int_times(x1, x2, x3)\n" == capture_render(c)
+        c = x1 * x2 == x3
+        @test "int_times(x1, x2, x3)\n" == capture_render(c)
 
         #c = x3 == x1 * x2
         #@test "int_times(x1, x2, x3)\n" == capture_render(c)
