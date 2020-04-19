@@ -225,8 +225,9 @@ sum(varlist::Array{T, 1})  where T <: BeeInteger = BeeSum{T}(varlist)
 for (VT, VF) in [(:BeeBoolean, :bool), (:BeeInteger, :int)],
     (OP, EF) in [(:(<=), :leq), (:(>=), :geq), (:(==), :eq), (:(<), :lt), (:(>), :gt), (:(!=), :neq)]
     @eval BEE begin
-        $OP(lhs::ZZ, rhs::BeeSum{$VT})  = $OP(rhs, lhs)
-        $OP(lhs::BeeSum{$VT}, rhs::ZZ) = $(Symbol(VF, :_array_sum_, EF))(lhs.varlist, rhs)
+        # Some of these are not symmetirc. Let's don't switch order
+        # $OP(lhs::ZZ, rhs::BeeSum{T} where T <: $VT)  = $OP(rhs, lhs)
+        $OP(lhs::BeeSum{T} where T <: $VT, rhs::ZZ) = $(Symbol(VF, :_array_sum_, EF))(lhs.varlist, rhs)
     end
 end
 

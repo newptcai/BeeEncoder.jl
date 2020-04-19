@@ -110,6 +110,23 @@ end
 
         c = x3 == max([x1, x2])
         @test "int_array_max([x1, x2], x3)\n" == capture_render(c)
+    end
 
+    @testset "Cardinality" begin
+
+        BEE.reset()
+
+        xl = [beebool("x$i") for i in 1:3]
+
+        il = [beeint("i$i", 3, 5) for i in 1:3]
+
+        c = sum(il) == il[1]
+        @test "int_array_sum_eq([i1, i2, i3], i1)\n" == capture_render(c)
+
+        c = sum(xl) >= il[1]
+        @test "bool_array_sum_geq([x1, x2, x3], i1)\n" == capture_render(c)
+
+        c = sum(xl) > il[1]
+        @test "bool_array_sum_gt([x1, x2, x3], i1)\n" == capture_render(c)
     end
 end
