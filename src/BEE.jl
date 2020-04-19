@@ -213,9 +213,6 @@ end
 # Create BEE summation expression, which applies to list of symbols
 struct BeeSum{T <: BeeSymbol} <: BeeExpression
     varlist::Array{BeeSymbol, 1}
-    #BeeSum{T}(varlist) where T <: BeeSymbol
-    #    new([convert(BeeSymbol, v) for v in varlist])
-    #end
 end
 
 sum(varlist::Array{T, 1})  where T <: BeeBoolean = BeeSum{T}(varlist)
@@ -357,11 +354,6 @@ for (ET, EF, OP) in boolOP
     struct $ET <: BeeExpression
         lhs::BeeSymbol
         rhs::BeeSymbol
-
-        # Convert everything in the list to BeeBoolean
-        # function $ET(varlist::Array{T, 1} where T <: BB)
-        #     new([convert(BeeBoolean, v) for v in varlist])
-        # end
     end
 
     # No need to check type here
