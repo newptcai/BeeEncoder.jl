@@ -2,7 +2,8 @@ module BEE
 
 import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert
 
-export BeeInt, BeeBool, BeeModel, @beeint, @beebool, beeint, beebool, render, reset
+export BeeInt, BeeBool, BeeModel, 
+    @beeint, @beebool, beeint, beebool, render, reset, and, or, iff, alldiff
 
 # -------------------------------------------------------------
 # abstract types
@@ -264,9 +265,9 @@ for (ET, EF, OP) in intBOP
     end
 
     # `lhs` is true `iff` rhs is true
-    (==)(lhs::BeeBoolLiteral, rhs::$ET) = rhs == lhs
-    function (==)(lhs::$ET, rhs::BeeBoolLiteral)
-        if rhs.val
+    (==)(lhs::Bool, rhs::$ET) = rhs == lhs
+    function (==)(lhs::$ET, rhs::Bool)
+        if rhs
             $(Symbol(:int_, EF))(lhs.lhs, lhs.rhs)
         else
             $(Symbol(:int_, EF, :_reif))(lhs.lhs, lhs.rhs, rhs)
@@ -284,6 +285,7 @@ for (ET, EF, OP) in  intAOP
     end
 
     # `lhs` == `rhs` is true
+    (==)(lhs::BeeInteger, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeInteger)
         $(Symbol(:int_, EF))(lhs.lhs, lhs.rhs, rhs)
     end
@@ -291,8 +293,8 @@ for (ET, EF, OP) in  intAOP
 end
 
 # Create BEE operations on one integer array
-intarrayOP = [(:BeeAllDiff, :allDiff, :alldiff)]
-for (ET, EF, OP) in intarrayOP
+intarrayOP = [(:BeeArrayAllDiff, :allDiff, :alldiff, :_reif)]
+for (ET, EF, OP, TAIL) in intarrayOP
     @eval BEE begin
     struct $ET <: BeeExpression
         varlist::Array{BeeInteger, 1}
@@ -304,22 +306,59 @@ for (ET, EF, OP) in intarrayOP
     end
 
     # No need to check type here
-    $OP(varlist) = $ET(varlist)
+    $OP(varlist::Array{T, 1} where T <: ZZ) = $ET(varlist)
 
-    (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
-    function (==)(lhs::$ET, rhs::BeeBoolean)
-        $(Symbol(:bool_array_, EF, :_reif))(lhs.varlist, rhs)
+    (==)(lhs::BeeInteger, rhs::$ET) = rhs == lhs
+    function (==)(lhs::$ET, rhs::BeeInteger)
+        $(Symbol(:int_array_, EF, TAIL))(lhs.varlist, rhs)
     end
 
+    (==)(lhs::Bool, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::Bool)
         if rhs
             $(Symbol(:int_array_, EF))(lhs.varlist)
         else
-            $(Symbol(:int_array_, EF, :_reif))(lhs.varlist, rhs)
+            $(Symbol(:int_array_, EF, TAIL))(lhs.varlist, rhs)
         end
     end
     end
 end
+
+# Create BEE operations on one integer array
+#intarrayOP = [(:BeeArrayAllDiff, :allDiff, :alldiff, :_reif),
+#              (:BeeArrayPlus, :plus, :plus, :()),
+#              (:BeeArrayTimes, :times, :times, :()), 
+#              (:BeeArrayMax, :max, :max, :()), 
+#              (:BeeArrayMin, :min, :min, :())]
+#for (ET, EF, OP, TAIL) in intarrayOP
+#    @eval BEE begin
+#    struct $ET <: BeeExpression
+#        varlist::Array{BeeInteger, 1}
+#
+#        # Convert everything in the list to BeeBoolean
+#        # function $ET(varlist::Array{T, 1} where T <: ZZ)
+#        #     new([convert(BeeInteger, v) for v in varlist])
+#        # end
+#    end
+#
+#    # No need to check type here
+#    $OP(varlist::Array{T, 1} where T <: ZZ) = $ET(varlist)
+#
+#    (==)(lhs::BeeInteger, rhs::$ET) = rhs == lhs
+#    function (==)(lhs::$ET, rhs::BeeInteger)
+#        $(Symbol(:int_array_, EF, TAIL))(lhs.varlist, rhs)
+#    end
+#
+#    (==)(lhs::Bool, rhs::$ET) = rhs == lhs
+#    function (==)(lhs::$ET, rhs::Bool)
+#        if rhs
+#            $(Symbol(:int_array_, EF))(lhs.varlist)
+#        else
+#            $(Symbol(:int_array_, EF, TAIL))(lhs.varlist, rhs)
+#        end
+#    end
+#    end
+#end
 
 # -------------------------------------------------------------
 # BEE operator for boolean
