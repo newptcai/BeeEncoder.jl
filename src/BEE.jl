@@ -389,11 +389,6 @@ for (ET, EF, OP) in boolarrayOP
     @eval BEE begin
     struct $ET <: BeeExpression
         varlist::Array{BeeBoolean, 1}
-
-        # Convert everything in the list to BeeBoolean
-        # function $ET(varlist::Array{T, 1} where T <: BB)
-        #     new([convert(BeeBoolean, v) for v in varlist])
-        # end
     end
 
     # No need to check type here
@@ -423,13 +418,6 @@ for (ET, EF, OP) in bool2arrayOP
     struct $ET <: BeeExpression
         lhs::Array{BeeBoolean, 1}
         rhs::Array{BeeBoolean, 1}
-
-        # Convert everything in the list to BeeBoolean
-        #function $ET(lhs::Array{T, 1} where T <: BB, rhs::Array{T, 1} where T <: BB)
-        #    blhs = [convert(BeeBoolean, v) for v in lhs]
-        #    brhs = [convert(BeeBoolean, v) for v in rhs]
-        #    new(blhs, brhs)
-        #end
     end
 
     $OP(lhs::Array{1, T} where T <: BB, rhs::Array{1, T} where T <: BB) = $ET(lhs, rhs)

@@ -113,7 +113,6 @@ end
     end
 
     @testset "Cardinality" begin
-
         BEE.reset()
 
         xl = [beebool("x$i") for i in 1:3]
@@ -128,5 +127,16 @@ end
 
         c = sum(xl) > il[1]
         @test "bool_array_sum_gt([x1, x2, x3], i1)\n" == capture_render(c)
+    end
+
+    @testset "Boolean arrays relation" begin
+        BEE.reset()
+
+        xl = [beebool("x$i") for i in 1:3]
+
+        il = [beeint("i$i") for i in 1:3]
+
+        c = (xl == il) == true
+        @test "bool_arrays_eq([x1, x2, x3], [i1, i2, i3])\n" == capture_render(c)
     end
 end
