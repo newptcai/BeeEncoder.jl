@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/newptcai/BEE.jl.svg?branch=master)](https://travis-ci.org/newptcai/BEE.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/256705444.svg)](https://zenodo.org/badge/latestdoi/256705444)
 
 *This article is about my Julia interface package [`BEE.jl`](https://github.com/newptcai/BEE.jl) for
 using [`BEE` (Ben-Gurion University Equi-propagation
