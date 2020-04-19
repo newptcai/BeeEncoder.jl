@@ -102,14 +102,14 @@ end
         c = x1 * x2 == x3
         @test "int_times(x1, x2, x3)\n" == capture_render(c)
 
-        #c = x3 == x1 * x2
-        #@test "int_times(x1, x2, x3)\n" == capture_render(c)
+        c = x3 == x1 * x2
+        @test "int_times(x1, x2, x3)\n" == capture_render(c)
 
-        #c = max([x1, x2]) == x3
-        #@test "int_array_max([x1, x2], x3)\n" == capture_render(c)
+        c = max([x1, x2]) == x3
+        @test "int_array_max([x1, x2], x3)\n" == capture_render(c)
 
-        #c = x3 == max([x1, x2])
-        #@test "int_array_max([x1, x2], x3)\n" == capture_render(c)
+        c = x3 == max([x1, x2])
+        @test "int_array_max([x1, x2], x3)\n" == capture_render(c)
 
     end
 end

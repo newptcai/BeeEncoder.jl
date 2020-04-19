@@ -335,7 +335,7 @@ for (ET, EF, OP) in intarrayOP
 
     (==)(lhs::BeeInteger, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeInteger)
-        $(Symbol(:int_array_, EF, TAIL))(lhs.varlist, rhs)
+        $(Symbol(:int_array_, EF))(lhs.varlist, rhs)
     end
     end
 end
