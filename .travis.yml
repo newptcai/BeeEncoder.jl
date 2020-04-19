@@ -12,3 +12,6 @@ matrix:
   fast_finish: true
 notifications:
   email: false
+branches:
+  except:
+    - dev
