@@ -15,7 +15,7 @@ using Test
         int_plus(x, y, z)
         bool_eq(x1, -x2)
         bool_eq(x2, true)
-        bool_array_sum_eq(([-x1, x2, -x3, x4], w))
+        bool_array_sum_eq([-x1, x2, -x3, x4], w)
         """
         ret = @capture_out include("../example/simple-example.jl")
         @test ret == example

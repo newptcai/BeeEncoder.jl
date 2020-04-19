@@ -2,7 +2,7 @@ module BEE
 
 import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert
 
-export BeeInt, BeeBool, BeeModel, @beeint, @beebool, beeint, beebool, render
+export BeeInt, BeeBool, BeeModel, @beeint, @beebool, beeint, beebool, render, reset
 
 # -------------------------------------------------------------
 # abstract types
@@ -15,7 +15,6 @@ abstract type BeeSymbol <: BeeObject end
 abstract type BeeBoolean <: BeeSymbol end
 abstract type BeeInteger <: BeeSymbol end
 
-"Type alias"
 BB = Union{BeeBoolean, Bool}
 ZZ = Union{BeeInteger, Int}
 
@@ -100,6 +99,7 @@ struct BeeIntLiteral <: BeeInteger
 end
 show(io::IO, v::BeeIntLiteral) = print(io, v.val)
 convert(::Type{BeeInteger}, v::Int) = BeeIntLiteral(v)
+convert(::Type{BeeSymbol}, v::Int) = BeeIntLiteral(v)
 
 "A boolean value, i.e., `true` or `false`"
 struct BeeBoolLiteral <: BeeBoolean
@@ -107,6 +107,7 @@ struct BeeBoolLiteral <: BeeBoolean
 end
 show(io::IO, v::BeeBoolLiteral) = print(io, v.val)
 convert(::Type{BeeBoolean}, v::Bool) = BeeBoolLiteral(v)
+convert(::Type{BeeSymbol}, v::Bool) = BeeBoolLiteral(v)
 
 """
     render(obj::BeeObject)
@@ -141,8 +142,9 @@ end
 
 struct BeeConstraint <: BeeObject
     name::String
-    varlist::NTuple{N, Union{Literal, Array{T, 1}}} where {N, T <: Literal}
-    function BeeConstraint(model::BeeObject, name, var...)
+    # Don't check the type of the array
+    varlist::Array{T, 1} where T
+    function BeeConstraint(model::BeeObject, name, var)
         constraint = new(name, var)
         push!(model.conslist, constraint)
         constraint
@@ -154,7 +156,8 @@ BeeConstraint(name::String, var...) = BeeConstraint(gblmodel, name, var...)
 render(io::IO, constraint::BeeConstraint) = print(io, constraint, "\n")
 
 function show(io::IO, constraint::BeeConstraint) 
-    print(io, constraint.name, "(", constraint.varlist, ")")
+    varstr = join(constraint.varlist, ", ")
+    print(io, constraint.name, "(", varstr, ")")
 end
 
 
@@ -178,9 +181,6 @@ show(io::IO, ::MIME"text/plain", m::BeeModel) = print(io,
 
 hasvar(model::BeeModel, name::String) = haskey(model.intdict, name) || haskey(model.booldict, name)
 
-"The default BEE model."
-const gblmodel = BeeModel("defaul model")
-
 """
     render()
 
@@ -200,32 +200,32 @@ function render(io::IO, model::BeeModel)
     end
 end
 
+"Delete all variables and constraints from the default model."
+function reset()
+    global gblmodel = BeeModel("defaul model")
+end
+
 # -------------------------------------------------------------
 # BEE operator for both integer and boolean
 # -------------------------------------------------------------
 
-
 # Create BEE summation expression, which applies to list of symbols
-for (VT, UT) in [(:BeeBoolean, :BB), (:BeeInteger, :ZZ) ]
-    @eval BEE begin
-    struct BeeSum{$VT} <: BeeExpression
-        varlist::Array{$VT, 1}
-
-        function BeeSum(Array{T, 1} where T <: $UT)
-            new([convert($VT, v) for v in varlist])
-        end
-    end
-
-    sum(varlist) = BeeSum(varlist)
-    end
+struct BeeSum{T <: BeeSymbol} <: BeeExpression
+    varlist::Array{BeeSymbol, 1}
+    #BeeSum{T}(varlist) where T <: BeeSymbol
+    #    new([convert(BeeSymbol, v) for v in varlist])
+    #end
 end
 
+sum(varlist::Array{T, 1})  where T <: BeeBoolean = BeeSum{T}(varlist)
+sum(varlist::Array{T, 1})  where T <: BeeInteger = BeeSum{T}(varlist)
+
 # Create BEE operator on summation.
-for (VT, UT, VF) in [(:BeeBoolean, :BB, :bool), (:BeeInteger, :ZZ, :int)],
+for (VT, VF) in [(:BeeBoolean, :bool), (:BeeInteger, :int)],
     (OP, EF) in [(:(<=), :leq), (:(>=), :geq), (:(==), :eq), (:(<), :lt), (:(>), :gt), (:(!=), :neq)]
     @eval BEE begin
-        $OP(lhs::$UT, rhs::BeeSum{$VT})  = $OP(rhs, lhs)
-        $OP(lhs::BeeSum{T}, rhs::$UT) = $(Symbol(:VF, :_array_sum, EF))(lhs.varlist, rhs)
+        $OP(lhs::ZZ, rhs::BeeSum{$VT})  = $OP(rhs, lhs)
+        $OP(lhs::BeeSum{$VT}, rhs::ZZ) = $(Symbol(VF, :_array_sum_, EF))(lhs.varlist, rhs)
     end
 end
 
@@ -242,10 +242,11 @@ intAOP = [(:BeePlus, :plus, :+), (:BeeTimes, :times, :*), (:BeeMax, :max, :max),
 
 # Define function for integer $OP integer. Avoid matching `Int` $OP `Int`
 for (ET, EF, OP) in [intBOP; intAOP]
+    @eval BEE begin
     $OP(lhs::Int, rhs::BeeInteger) = $ET(BeeIntLiteral(lhs), rhs)
     $OP(lhs::BeeInteger, rhs::Int) = $ET(lhs, BeeIntLiteral(rhs))
     $OP(lhs::BeeInteger, rhs::BeeInteger) = $ET(lhs, rhs)
-
+    end
 end
 
 # Create BEE boolean expression for two integers, which applies to two `BeeInteger`.
@@ -257,13 +258,13 @@ for (ET, EF, OP) in intBOP
     end
 
     # `lhs` is true `iff` rhs is true
-    function (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
+    (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeBoolean)
         $(Symbol(:int_, EF, :_reif))(lhs.lhs, lhs.rhs, rhs)
     end
 
     # `lhs` is true `iff` rhs is true
-    function (==)(lhs::BeeBoolLiteral, rhs::$ET) = rhs == lhs
+    (==)(lhs::BeeBoolLiteral, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeBoolLiteral)
         if rhs.val
             $(Symbol(:int_, EF))(lhs.lhs, lhs.rhs)
@@ -297,15 +298,15 @@ for (ET, EF, OP) in intarrayOP
         varlist::Array{BeeInteger, 1}
 
         # Convert everything in the list to BeeBoolean
-        function $ET(varlist::Array{T, 1} where T <: ZZ)
-            new([convert(BeeInteger, v) for v in varlist])
-        end
+        # function $ET(varlist::Array{T, 1} where T <: ZZ)
+        #     new([convert(BeeInteger, v) for v in varlist])
+        # end
     end
 
     # No need to check type here
     $OP(varlist) = $ET(varlist)
 
-    function (==)(lhs::BeeBoolean, rhs::$ET)
+    (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeBoolean)
         $(Symbol(:bool_array_, EF, :_reif))(lhs.varlist, rhs)
     end
@@ -324,28 +325,66 @@ end
 # BEE operator for boolean
 # -------------------------------------------------------------
 
-# Create BEE operators on boolean arrays
-boolarrayOP = [(:BeeAnd, :and, :and), (:BeeOr, :or, :or), (:BeeXor, :xor, :xor)]
-# Logic Expressions on one array.
+# hard code this bit since it's just one function
+(==)(lhs::Bool, rhs::BeeBoolean) = bool_eq(lhs, rhs)
+(==)(lhs::BeeBoolean, rhs::Bool) = bool_eq(lhs, rhs)
+(==)(lhs::BeeBoolean, rhs::BeeBoolean) = bool_eq(lhs, rhs)
+
+# Logic Expressions on two boolean.
+boolOP = [(:BeeAnd, :and, :and), (:BeeOr, :or, :or), (:BeeXor, :xor, :xor), (:BeeIff, :iff, :iff)]
+for (ET, EF, OP) in boolOP
+    @eval BEE begin
+    struct $ET <: BeeExpression
+        lhs::BeeSymbol
+        rhs::BeeSymbol
+
+        # Convert everything in the list to BeeBoolean
+        # function $ET(varlist::Array{T, 1} where T <: BB)
+        #     new([convert(BeeBoolean, v) for v in varlist])
+        # end
+    end
+
+    # No need to check type here
+    $OP(lhs, rhs) = $ET(lhs, rhs)
+
+    (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
+    function (==)(lhs::$ET, rhs::BeeBoolean)
+        $(Symbol(:bool_, EF, :_reif))(lhs.lhs, lhs.rhs, rhs)
+    end
+
+    (==)(lhs::Bool, rhs::$ET) = rhs == lhs
+    function (==)(lhs::$ET, rhs::Bool)
+        if rhs
+            $(Symbol(:bool_, EF))(lhs.lhs, lhs.rhs)
+        else
+            $(Symbol(:bool_, EF, :_reif))(lhs.lhs, lhs.rhs, rhs)
+        end
+    end
+    end
+end
+
+# Create BEE operators on boolean arrays. Note that 
+boolarrayOP = [(:BeeArrayAnd, :and, :and), (:BeeArrayOr, :or, :or), (:BeeArrayXor, :xor, :xor), (:BeeArrayIff, :iff, :iff)]
 for (ET, EF, OP) in boolarrayOP
     @eval BEE begin
     struct $ET <: BeeExpression
         varlist::Array{BeeBoolean, 1}
 
         # Convert everything in the list to BeeBoolean
-        function $ET(varlist::Array{T, 1} where T <: BB)
-            new([convert(BeeBoolean, v) for v in varlist])
-        end
+        # function $ET(varlist::Array{T, 1} where T <: BB)
+        #     new([convert(BeeBoolean, v) for v in varlist])
+        # end
     end
 
     # No need to check type here
     $OP(varlist) = $ET(varlist)
 
-    function (==)(lhs::BeeBoolean, rhs::$ET)
+    (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeBoolean)
         $(Symbol(:bool_array_, EF, :_reif))(lhs.varlist, rhs)
     end
 
+    (==)(lhs::Bool, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::Bool)
         if rhs
             $(Symbol(:bool_array_, EF))(lhs.varlist)
@@ -357,7 +396,7 @@ for (ET, EF, OP) in boolarrayOP
 end
 
 # Create BEE operators on two boolean arrays
-bool2arrayOP[(:BeeArrayEq, :eq, :(==)), (:BeeArrayNeq, :neq, :(!=)), 
+bool2arrayOP = [(:BeeArrayEq, :eq, :(==)), (:BeeArrayNeq, :neq, :(!=)), 
                      (:BeeLex, :lex, :(<=)), (:BeelexLt, :lexLt, :(<))]
 for (ET, EF, OP) in bool2arrayOP
     @eval BEE begin
@@ -366,22 +405,21 @@ for (ET, EF, OP) in bool2arrayOP
         rhs::Array{BeeBoolean, 1}
 
         # Convert everything in the list to BeeBoolean
-        function $ET(lhs::Array{T, 1} where T <: BB, rhs::Array{T, 1} where T <: BB)
-            blhs = [convert(BeeBoolean, v) for v in lhs]
-            brhs = [convert(BeeBoolean, v) for v in rhs]
-            new(blhs, brhs)
-        end
+        #function $ET(lhs::Array{T, 1} where T <: BB, rhs::Array{T, 1} where T <: BB)
+        #    blhs = [convert(BeeBoolean, v) for v in lhs]
+        #    brhs = [convert(BeeBoolean, v) for v in rhs]
+        #    new(blhs, brhs)
+        #end
     end
 
-    # Don't need to check type here
-    $OP(lhs, rhs) = $ET(lhs, rhs)
+    $OP(lhs::Array{1, T} where T <: BB, rhs::Array{1, T} where T <: BB) = $ET(lhs, rhs)
 
-    function (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
+    (==)(lhs::BeeBoolean, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::BeeBoolean)
         $(Symbol(:bool_arrays_, EF, :_reif))(lhs.lhs, lhs.rhs, rhs)
     end
 
-    function (==)(lhs::Bool, rhs::$ET)
+    (==)(lhs::Bool, rhs::$ET) = rhs == lhs
     function (==)(lhs::$ET, rhs::Bool)
         if rhs
             $(Symbol(:bool_arrays_, EF))(lhs.lhs, lhs.rhs)
@@ -392,11 +430,6 @@ for (ET, EF, OP) in bool2arrayOP
     end
 end
 
-
-(==)(lhs::BeeBoolean, rhs::BeeBoolean) = bool_eq(lhs, rhs)
-(==)(lhs::Bool, rhs::BeeBoolean) = bool_eq(lhs, rhs)
-(==)(lhs::BeeBoolean, rhs::Bool) = bool_eq(lhs, rhs)
-(==)(lhs::BeeSum{BeeBoolean}, rhs::BeeBoolean) = bool_array_sum_eq(lhs.varlist, rhs)
 
 # -------------------------------------------------------------
 # BEE functions
@@ -446,7 +479,13 @@ for F in (:int_order2bool_array,
           :int_arrays_lex_reif,
           :int_arrays_lexLt_reif)
     SF = String(F)
-    @eval BEE $F(var...) = BeeConstraint($SF, var...)
+    @eval BEE $F(var...) = BeeConstraint($SF, [var...])
 end
+
+# -------------------------------------------------------------
+# Initialize module
+# -------------------------------------------------------------
+
+reset()
 
 end
