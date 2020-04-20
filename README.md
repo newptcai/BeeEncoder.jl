@@ -11,6 +11,11 @@ Encoder)](http://amit.metodi.me/research/bee/) by [Amit Metodi](http://amit.meto
 
 ## The beauty of brute force 🤜️
 
+<p align="center">
+<img src="images/egg-power.jpg" alt="Brute force" width="450" />
+</p>
+
+
 Modern [SAT](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem) solver are often capable
 of handling problems with *HUGE* size. They have been successfully applied to many combinatorics
 problems. Communications ACM has an article titled [The Science of Brute
@@ -19,11 +24,6 @@ Force](https://cacm.acm.org/magazines/2017/8/219606-the-science-of-brute-force/f
 solved with an SAT solver.  Another well-known example is [Paul Erdős Discrepancy
 Conjecture](https://www.quantamagazine.org/terence-taos-answer-to-the-erdos-discrepancy-problem-20151001/),
 which was [initially attacked with the help of computer](https://arxiv.org/pdf/1402.2184.pdf).
-
-<p align="center">
-<img src="images/egg-power.jpg" alt="Brute force" width="450" />
-</p>
-
 
 Thus it is perhaps beneficial 🥦️ for anyone who is interested in combinatorics 🀄️ to learn how to
 harness the beautiful brute force 🔨 of SAT solvers. Doing experiments with SAT solver can search much

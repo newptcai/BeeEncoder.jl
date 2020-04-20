@@ -41,6 +41,17 @@ end
         @beebool x1
         @test "new_bool(x1)\n" == capture_render(x1)
 
+        x2 = beebool("x2")
+        @test "new_bool(x2)\n" == capture_render(x2)
+
+        x3 = beebool(:x3)
+        @test "new_bool(x3)\n" == capture_render(x3)
+
+        yl = @beebool y1 y2 y3
+        for i in 1:3
+            @test "new_bool(y$i)\n" == capture_render(yl[i])
+        end
+
         @beeint i1 3 55
         @test "new_int(i1, 3, 55)\n" == capture_render(i1)
     end

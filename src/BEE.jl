@@ -69,12 +69,21 @@ end
 
 BeeBool(name::String) = BeeBool(gblmodel, name)
 
-macro beebool(name)
-    return quote
-        $(esc(name)) = BeeBool($(String(name)))
+macro beebool(namelist...)
+    q = Expr(:block)
+    varlist = [] # list of boolean variables to create
+    for name in namelist
+        if isa(name, Symbol)
+            push!(varlist, name)
+            ex = :($(esc(name)) = beebool($(string(name))))
+            push!(q.args, ex)
+        end
     end
+    push!(q.args, Expr(:tuple, map(esc, varlist)...)) # return all of the variables we created
+    q
 end
-beebool(name) = BeeBool(name)
+beebool(name::String) = BeeBool(name)
+beebool(name::Symbol) = beebool(string(name))
 
 
 render(io::IO, var::BeeBool) = print(io, "new_bool($var)\n")
