@@ -246,12 +246,12 @@ constrain(cons) = constrain(gblmodel, cons)
 macro constrain(cons)
     :(constrain($(esc(cons))))
 end
-"""
-    render()
 
-Render the global model `gblmodel` to BEE syntax and print it to `stdout`.
-"""
-render() = render(gblmodel)
+"Render the global model `gblmodel` to BEE syntax and print it to `stdout`."
+render() = render(Base.stdout, gblmodel)
+
+"Render the global model `gblmodel` to BEE syntax and print it to `io`."
+render(io::IO) = render(io, gblmodel)
 
 function render(io::IO, model::BeeModel)
     for intv in values(model.intdict)
@@ -261,7 +261,7 @@ function render(io::IO, model::BeeModel)
         render(io, boolv)
     end
     for cons in model.conslist
-        render(cons)
+        render(io, cons)
     end
 end
 
