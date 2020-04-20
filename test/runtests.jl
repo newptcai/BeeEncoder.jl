@@ -64,9 +64,14 @@ end
 
         BEE.reset()
 
-        @beeint i1 3 55
+        @beeint xx 3 55
 
-        @test "new_int(i1, 3, 55)\n" == capture_render(i1)
+        @test "new_int(xx, 3, 55)\n" == capture_render(xx)
+
+        il = @beeint i[1:10] 3 7
+        for i in 1:10
+            @test "new_int(i$i, 3, 7)\n" == capture_render(il[i])
+        end
     end
 
     @testset "Boolean statements" begin

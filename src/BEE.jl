@@ -41,11 +41,28 @@ struct BeeInt <: BeeInteger
 end
 
 BeeInt(name::String, lo::Int, hi::Int) = BeeInt(gblmodel, name, lo, hi)
+BeeInt(name::Symbol, lo, hi) = BeeInt(string(name), lo, hi)
 
 macro beeint(name, lo, hi) 
-    return quote
-        $(esc(name)) = BeeInt($(String(name)), $lo, $hi)
+    q = Expr(:block)
+    if isa(name, Symbol)
+        ex = :($(esc(name)) = beeint($(string(name)), $lo, $hi))
+        push!(q.args, ex)
+        push!(q.args, escvar(name)) # return all of the variables we created
+    elseif isa(name, Expr) && name.head == :ref
+        vhead = name.args[1]
+        vlist = []
+        for i in eval(name.args[2])
+            vhead = name.args[1]
+            vstr = "$vhead$i"
+            vsym = Symbol(vstr)
+            ex = :($(esc(vsym)) = beeint($(vstr), $lo, $hi))
+            push!(vlist, vsym)
+            push!(q.args, ex)
+        end
+        push!(q.args, escvar(vlist))
     end
+    q
 end
 beeint(name, lo, hi) = BeeInt(name, lo, hi)
 
@@ -66,8 +83,8 @@ struct BeeBool <: BeeBoolean
         model.booldict[name] = var
     end
 end
-
 BeeBool(name::String) = BeeBool(gblmodel, name)
+BeeBool(name::Symbol) = BeeBool(string(name))
 
 function escvar(var) 
     if isa(var, Symbol)
@@ -108,8 +125,7 @@ macro beebool(namelist...)
     push!(q.args, ret) # return all of the variables we created
     q
 end
-beebool(name::String) = BeeBool(name)
-beebool(name::Symbol) = beebool(string(name))
+beebool(name) = BeeBool(name)
 
 
 render(io::IO, var::BeeBool) = print(io, "new_bool($var)\n")
