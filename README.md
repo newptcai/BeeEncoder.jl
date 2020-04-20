@@ -97,7 +97,7 @@ by typing
 ```shell
 sudo apt-add-repository ppa:swi-prolog/stable
 sudo apt-get update
-sudo apt-get install swi-prolog
+sudo apt-get install swi-prolog-nox
 ```
 Download `BEE` using the link above and unzip it somewhere on your computer.
 In a terminal, change directory to
