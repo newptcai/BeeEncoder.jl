@@ -52,7 +52,20 @@ end
             @test "new_bool(y$i)\n" == capture_render(yl[i])
         end
 
+        zl = @beebool z[1:10]
+        for i in 1:10
+            @test "new_bool(z$i)\n" == capture_render(zl[i])
+        end
+
+        (a, b, cl, d) = @beebool a b c[1:10] d
+        for i in 1:10
+            @test "new_bool(c$i)\n" == capture_render(cl[i])
+        end
+
+        BEE.reset()
+
         @beeint i1 3 55
+
         @test "new_int(i1, 3, 55)\n" == capture_render(i1)
     end
 

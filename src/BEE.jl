@@ -69,6 +69,15 @@ end
 
 BeeBool(name::String) = BeeBool(gblmodel, name)
 
+function escvar(var) 
+    if isa(var, Symbol)
+        vs = esc(var)
+    else
+        vs = Expr(:vect, [esc(v) for v in var]...)
+    end
+    vs
+end
+
 macro beebool(namelist...)
     q = Expr(:block)
     varlist = [] # list of boolean variables to create
@@ -77,9 +86,26 @@ macro beebool(namelist...)
             push!(varlist, name)
             ex = :($(esc(name)) = beebool($(string(name))))
             push!(q.args, ex)
+        elseif isa(name, Expr) && name.head == :ref
+            vhead = name.args[1]
+            vlist = []
+            for i in eval(name.args[2])
+                vhead = name.args[1]
+                vstr = "$vhead$i"
+                vsym = Symbol(vstr)
+                ex = :($(esc(vsym)) = beebool($(vstr)))
+                push!(vlist, vsym)
+                push!(q.args, ex)
+            end
+            push!(varlist, vlist)
         end
     end
-    push!(q.args, Expr(:tuple, map(esc, varlist)...)) # return all of the variables we created
+    if length(varlist) > 1
+        ret = Expr(:tuple, map(escvar, varlist)...)
+    else
+        ret = escvar(varlist[1])
+    end
+    push!(q.args, ret) # return all of the variables we created
     q
 end
 beebool(name::String) = BeeBool(name)

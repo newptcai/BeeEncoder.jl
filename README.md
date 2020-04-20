@@ -308,14 +308,14 @@ x + y == z
 
 @beeint w 0 10
 
-xl = [beebool("x$i") for i=1:4]
+xl = @beebool x[1:4]
 
 xl[1] == -xl[2]
 xl[2] == true
 
 sum([-xl[1], xl[2], -xl[3], xl[4]]) == w
 
-print(BEE.render())
+BEE.render()
 ```
 You will get output like this
 ```Julia
