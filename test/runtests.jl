@@ -26,6 +26,7 @@ end
         bool_eq(x1, -x2)
         bool_eq(x2, true)
         bool_array_sum_eq([-x1, x2, -x3, x4], w)
+        solve satisfy
         """
         ret = @capture_out include("../example/simple-example.jl")
         @test ret == example
@@ -40,11 +41,11 @@ end
 
         BEE.reset()
         @constrain xl[1] == -xl[2]
-        @test "bool_eq(x1, -x2)\n" == capture_render()
+        @test "bool_eq(x1, -x2)\nsolve satisfy\n" == capture_render()
 
         BEE.reset()
         constrain(xl[1] == -xl[2])
-        @test "bool_eq(x1, -x2)\n" == capture_render()
+        @test "bool_eq(x1, -x2)\nsolve satisfy\n" == capture_render()
 
     end
 

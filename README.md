@@ -296,7 +296,7 @@ First install `BEE.jl` by typing this in `Julia REPL`.
 ```Julia
 using Pkg; Pkg.add("git@github.com:newptcai/BEE.jl.git")
 ```
-Then run the following code
+Then run the following code in Julia REPL
 ```Julia
 using BEE
 
@@ -331,8 +331,33 @@ int_plus(x, y, z)
 bool_eq(x1, -x2)
 bool_eq(x2, true)
 bool_array_sum_eq(([-x1, x2, -x3, x4], w))
+solve satisfy
 ```
 Exactly as above.
+You can solve this into a file and solve it with `BumbleBEE` as I described before.
+Or assuming that `BumbleBEE` can be found through your `PATH` environment variable, then you can run
+`BEE.solve()` directly in Julia and get the solution, like this.
+```Julia
+julia> solve()
+% SWI-Prolog interface to Glucose v4.0 ... OK
+%  \'''/ //      BumbleBEE       / \_/ \_/ \
+% -(|||)(')     (15/06/2017)     \_/ \_/ \_/
+%   ^^^        by Amit Metodi    / \_/ \_/ \
+%
+%  reading BEE file ... done
+%  load pl-satSolver ... %  encoding BEE model ... done
+%  solving CNF (satisfy) ...
+w = 2
+x = 0
+z = -4
+y = -4
+x1 = false
+x4 = false
+x2 = true
+x3 = true
+----------
+==========
+```
 
 ## Acknowledgement 🙏️
 

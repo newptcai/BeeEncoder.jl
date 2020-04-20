@@ -2,8 +2,22 @@ module BEE
 
 import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert
 
-export BeeInt, BeeBool, BeeModel, 
-    @beeint, @beebool, beeint, beebool, render, reset, and, or, iff, alldiff, constrain, @constrain
+export BeeInt, 
+    BeeBool, 
+    BeeModel, 
+    @beeint, 
+    @beebool, 
+    beeint, 
+    beebool, 
+    render, 
+    reset, 
+    and, 
+    or, 
+    iff, 
+    alldiff, 
+    constrain, 
+    @constrain, 
+    solve
 
 # -------------------------------------------------------------
 # abstract types
@@ -67,6 +81,7 @@ end
 beeint(name, lo, hi) = BeeInt(name, lo, hi)
 
 render(io::IO, var::BeeInt) = print(io, "new_int($var, $(var.lo), $(var.hi))\n")
+
 
 # -------------------------------------------------------------
 # BEE boolean variable
@@ -263,12 +278,37 @@ function render(io::IO, model::BeeModel)
     for cons in model.conslist
         render(io, cons)
     end
+    print(io, "solve satisfy\n")
 end
 
 "Delete all variables and constraints from the default model."
 function reset()
     global gblmodel = BeeModel("defaul model")
 end
+
+"Call `BumbleBEE` to solve the `model` and print the output into `io`"
+function solve(model::BeeModel, io::IO)
+    # Find where is BumbleBEE
+    beepath = Sys.which("BumbleBEE")
+    beedir = dirname(beepath)
+
+    # Render solution to the file
+    tempf = tempname() * ".bee"
+    open(tempf, "w") do io
+        render(io)
+    end
+
+    # Solve with BumbleBEE
+    curdir = pwd()
+    cd(beedir)
+    output = read(`./BumbleBEE $tempf`, String)
+    cd(curdir)
+    rm(tempf)
+    print(io, output)
+end
+
+" Solve the default model and print the solution to `stdout`."
+solve() = solve(gblmodel, Base.stdout)
 
 # -------------------------------------------------------------
 # BEE operator for both integer and boolean
