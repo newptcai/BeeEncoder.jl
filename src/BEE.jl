@@ -17,7 +17,8 @@ export BeeInt,
     alldiff, 
     constrain, 
     @constrain, 
-    solve
+    solve,
+    reset
 
 # -------------------------------------------------------------
 # abstract types
@@ -286,6 +287,15 @@ function reset()
     global gblmodel = BeeModel("defaul model")
 end
 
+# -------------------------------------------------------------
+# Call BumbleBEE directly from Julia
+# -------------------------------------------------------------
+struct BeeSolution
+    sat::Bool
+    intdict::Dict{String, Int}
+    booldict::Dict{String, Bool}
+end
+
 "Call `BumbleBEE` to solve the `model` and print the output into `io`"
 function solve(model::BeeModel, io::IO)
     # Find where is BumbleBEE
@@ -303,12 +313,47 @@ function solve(model::BeeModel, io::IO)
     cd(beedir)
     output = read(`./BumbleBEE $tempf`, String)
     cd(curdir)
+
+    # filter comments
+    rc = r"^%"
+    ri = r"^\s*(\w+)\s*=\s*(-?+\d+)"
+    rb = r"^\s*(\w+)\s*=\s*(true|false)"
+    runsat = r"=====UNSATISFIABLE====="
+
+    sat = true
+    
+    intdict = Dict{String, Int}()
+    booldict = Dict{String, Bool}()
+
+    for line in split(output, "\n")
+        println(io, line)
+        if match(runsat, line) !== nothing
+            sat = false
+        end
+        if match(rc, line) !== nothing
+            continue
+        elseif (m  = match(ri, line)) !== nothing
+            name, val = m.captures
+            intdict[name] = parse(Int, val)
+        elseif (m  = match(rb, line)) !== nothing
+            name, val = m.captures
+            booldict[name] = parse(Bool, val)
+        end
+    end
     rm(tempf)
-    print(io, output)
+
+    BeeSolution(sat, intdict, booldict)
 end
 
 " Solve the default model and print the solution to `stdout`."
 solve() = solve(gblmodel, Base.stdout)
+
+show(io::IO, ::MIME"text/plain", sol::BeeSolution) = print(io, 
+"""
+BEE solution:
+* Satisfiable: $(sol.sat)
+* Integer variables: $(sol.intdict)
+* Boolean variables: $(sol.booldict)""")
 
 # -------------------------------------------------------------
 # BEE operator for both integer and boolean

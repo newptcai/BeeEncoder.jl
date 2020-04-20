@@ -338,7 +338,7 @@ You can solve this into a file and solve it with `BumbleBEE` as I described befo
 Or assuming that `BumbleBEE` can be found through your `PATH` environment variable, then you can run
 `BEE.solve()` directly in Julia and get the solution, like this.
 ```Julia
-julia> solve()
+ulia> out = solve();
 % SWI-Prolog interface to Glucose v4.0 ... OK
 %  \'''/ //      BumbleBEE       / \_/ \_/ \
 % -(|||)(')     (15/06/2017)     \_/ \_/ \_/
@@ -357,6 +357,14 @@ x2 = true
 x3 = true
 ----------
 ==========
+```
+And if you check `out`, you will it is a dictionary containing the solution.
+```Julia
+julia> out
+BEE solution:
+* Satisfiable: true
+* Integer variables: Dict("w" => 2,"x" => 0,"z" => -4,"y" => -4)
+* Boolean variables: Dict{String,Bool}("x1" => 0,"x4" => 0,"x2" => 1,"x3" => 1)
 ```
 
 ## Acknowledgement 🙏️
