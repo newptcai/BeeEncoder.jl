@@ -92,9 +92,12 @@ I ran into some difficulties when I tried to compile [2017 version of
 `BEE`](http://amit.metodi.me/research/bee/bee20170615.zip). Here is how to do it correctly on
 Ubuntu. Other Linux system should work in similar ways.
 
-First install `swi-prolog`. You can do this in a terminal by
+First install [SWI-Prolog](https://www.swi-prolog.org/build/PPA.txt). You can do this in a terminal
+by typing
 ```shell
-sudo apt install swi-prolog
+sudo apt-add-repository ppa:swi-prolog/stable
+sudo apt-get update
+sudo apt-get install swi-prolog
 ```
 Download `BEE` using the link above and unzip it somewhere on your computer.
 In a terminal, change directory to
