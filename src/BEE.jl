@@ -3,7 +3,7 @@ module BEE
 import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert
 
 export BeeInt, BeeBool, BeeModel, 
-    @beeint, @beebool, beeint, beebool, render, reset, and, or, iff, alldiff
+    @beeint, @beebool, beeint, beebool, render, reset, and, or, iff, alldiff, constrain, @constrain
 
 # -------------------------------------------------------------
 # abstract types
@@ -196,22 +196,20 @@ struct BeeConstraint <: BeeObject
     name::String
     # Don't check the type of the array
     varlist::Array{T, 1} where T
-    function BeeConstraint(model::BeeObject, name, var)
-        constraint = new(name, var)
-        push!(model.conslist, constraint)
-        constraint
-    end
 end
-BeeConstraint(name::String, var...) = BeeConstraint(gblmodel, name, var...)
 
-# For constraints, there's is no difference between how they are rendered an printed
+"""
+    render(io, cons)
+
+Render `cons` to BEE syntax. For constraints, there's is no difference between how they are rendered
+and printed.
+"""
 render(io::IO, constraint::BeeConstraint) = print(io, constraint, "\n")
 
 function show(io::IO, constraint::BeeConstraint) 
     varstr = join(constraint.varlist, ", ")
     print(io, constraint.name, "(", varstr, ")")
 end
-
 
 # -------------------------------------------------------------
 # BEE model
@@ -233,6 +231,21 @@ show(io::IO, ::MIME"text/plain", m::BeeModel) = print(io,
 
 hasvar(model::BeeModel, name::String) = haskey(model.intdict, name) || haskey(model.booldict, name)
 
+"""
+    constrain(model, cons)
+
+Add the `cons` to `model`.  Note that unlike a variable, a constraint is not automatically added to
+any model when it is created.
+"""
+function constrain(model::BeeModel, cons::BeeConstraint) 
+    push!(model.conslist, cons)
+    cons
+end
+constrain(cons) = constrain(gblmodel, cons)
+
+macro constrain(cons)
+    :(constrain($(esc(cons))))
+end
 """
     render()
 
@@ -334,8 +347,8 @@ for (ET, EF, OP) in  intAOP
     end
 
     # `lhs` == `rhs` is true
-    (==)(lhs::BeeInteger, rhs::$ET) = rhs == lhs
-    function (==)(lhs::$ET, rhs::BeeInteger)
+    (==)(lhs::ZZ, rhs::$ET) = rhs == lhs
+    function (==)(lhs::$ET, rhs::ZZ)
         $(Symbol(:int_, EF))(lhs.lhs, lhs.rhs, rhs)
     end
     end

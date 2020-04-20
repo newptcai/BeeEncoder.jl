@@ -6,6 +6,10 @@ function capture_render(c)
     @capture_out render(c)
 end
 
+function capture_render()
+    @capture_out render()
+end
+
 @testset "BEE.jl" begin
     @testset "simple" begin
         BEE.reset()
@@ -33,6 +37,15 @@ end
 
         c = xl[1] == -xl[2]
         @test "bool_eq(x1, -x2)\n" == capture_render(c)
+
+        BEE.reset()
+        @constrain xl[1] == -xl[2]
+        @test "bool_eq(x1, -x2)\n" == capture_render()
+
+        BEE.reset()
+        constrain(xl[1] == -xl[2])
+        @test "bool_eq(x1, -x2)\n" == capture_render()
+
     end
 
     @testset "Declaring Variable" begin
@@ -133,6 +146,12 @@ end
 
         c = x3 == x1 * x2
         @test "int_times(x1, x2, x3)\n" == capture_render(c)
+
+        c = x1 + x2 == 33
+        @test "int_plus(x1, x2, 33)\n" == capture_render(c)
+
+        c = 33 == x1 + x2
+        @test "int_plus(x1, x2, 33)\n" == capture_render(c)
 
         c = max([x1, x2]) == x3
         @test "int_array_max([x1, x2], x3)\n" == capture_render(c)
