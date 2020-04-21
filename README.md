@@ -53,7 +53,7 @@ From my experiments, `BEE` has a good balance of expressive power and performanc
 
 ## Many ways to use `BEE` 🤔️
 
-`BEE` is written in `[Prolog](https://en.wikipedia.org/wiki/Prolog)`. So you either have to learn
+`BEE` is written in [`Prolog`](https://en.wikipedia.org/wiki/Prolog). So you either have to learn
 `Prolog`, or you can
 1. encode your problem in a syntax defined by `BEE`,
 2. use a program `BumbleBEE` that comes with the package to solve it directly with `BEE`
