@@ -309,7 +309,7 @@ try to encode your problem better.
 
 ## How to use `BEE.jl`
 
-When your problems becomes bigger, you don't want to write all BEE code manually. Here's what
+When your problems becomes bigger, you don't want to write all `BEE` code manually. Here's what
 `BEE.jl` may help. You can write your problem in Julia, and `BEE.jl` will convert it to `BEE` syntax.
 Here's how to do the example above with `BEE.jl`
 
