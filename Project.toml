@@ -1,7 +1,7 @@
 name = "BEE"
 uuid = "88bd2ba4-b024-4779-b1f7-c7f148753aae"
 authors = ["Xing Shi Cai <newptcai@gmail.com>"]
-version = "1.2.1"
+version = "1.0.0"
 
 [deps]
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
