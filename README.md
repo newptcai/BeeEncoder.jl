@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/newptcai/BeeEncoder.jl.svg?branch=master)](https://travis-ci.org/newptcai/BeeEncoder.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![codecov](https://codecov.io/gh/newptcai/BeeEncoder.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/newptcai/BeeEncoder.jl)
 
 *This package was originally named [`BEE.jl`](https://github.com/newptcai/BEE.jl).  The name was changed so it can be registered in Julia's package repository.*
 
