@@ -69,6 +69,13 @@ end
         @test x5.name == "x5"
         @test x5 === fetchbool("x5")
 
+        @test x5 === getbool("x5")
+        try
+            getbool("x6")
+        catch e
+            @test e isa KeyError
+        end
+
         yl = @beebool y1 y2 y3
         for i in 1:3
             @test "new_bool(y$i)\n" == capture_render(yl[i])
@@ -98,6 +105,14 @@ end
         @test hasint("i4")
 
         @test !hasint("i12")
+
+        @test xx === getint("xx")
+        try
+            getint("x6")
+        catch e
+            @test e isa KeyError
+        end
+
     end
 
     @testset "Boolean statements" begin

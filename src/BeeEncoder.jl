@@ -21,7 +21,10 @@ export BeeInt,
     hasvar,
     hasbool,
     hasint,
-    fetchbool
+    fetchbool,
+    getbool,
+    getint,
+    GBL_MODEL
 
 # -------------------------------------------------------------
 # abstract types
@@ -272,6 +275,12 @@ hasint(model::BeeModel, name) = haskey(model.intdict, name)
 "Check if the model has a integer variable called `name` in `GBL_MODEL`"
 hasint(name) = hasint(GBL_MODEL, name)
 
+"Retrive an existing integer variable called `name` in `GBL_MODEL`"
+getint(model, name) = model.intdict[name]
+
+"Retrive an existing integer variable called `name` in `GBL_MODEL`"
+getint(name) = getint(GBL_MODEL, name)
+
 "Either create or retrive an existing boolean variable called `name` in `model`"
 function fetchbool(model::BeeModel, name) 
     if hasbool(model, name)
@@ -283,6 +292,12 @@ end
 
 "Either create or retrive an existing boolean variable called `name` in `GBL_MODEL`"
 fetchbool(name) = fetchbool(GBL_MODEL, name)
+
+"Retrive an existing boolean variable called `name` in `GBL_MODEL`"
+getbool(model, name) = model.booldict[name]
+
+"Retrive an existing boolean variable called `name` in `GBL_MODEL`"
+getbool(name) = getbool(GBL_MODEL, name)
 
 """
     constrain(model, cons)
