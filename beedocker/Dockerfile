@@ -15,7 +15,7 @@ RUN apt-get update && \
     (cd ./bee/satsolver_src && CPATH="/usr/lib/swi-prolog/include/" make satSolvers) && \
     (cd ./bee/beeSolver/ && make) && \
     echo "export PATH=\"\$PATH:`realpath bee`\"" >> /root/.bashrc && \
-    ./julia-1.4.1/bin/julia -e "using Pkg; Pkg.add(PackageSpec(url=\"https://github.com/newptcai/BEE.jl\"))" && \
+    ./julia-1.4.1/bin/julia -e "using Pkg; Pkg.add(PackageSpec(url=\"https://github.com/newptcai/BeeEncoder.jl\"))" && \
     apt-get autoremove -y software-properties-common wget unzip build-essential vim && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
