@@ -202,6 +202,10 @@ Render `obj` to BEE syntax and print it to `stdout`.
 """
 render(obj::BeeObject) = render(Base.stdout, obj)
 
+render(arr::Array{T, 1}) where T <: Any = render(Base.stdout, arr)
+
+render(io::IO, arr::Array{T, 1}) where T <: BeeObject = show(io, arr)
+
 show(io::IO, v::BeeSymbol) = print(io, v.name)
 
 function show(io::IO, arr::Array{T, 1}) where T <: BeeObject

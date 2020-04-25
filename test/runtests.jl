@@ -94,6 +94,8 @@ using Test
             @test "new_int(i$i, 3, 7)\n" == capture_render(il[i])
         end
 
+        @test "[i1, i2, i3]" == capture_render(il[1:3])
+
         @test hasint("i4")
 
         @test !hasint("i12")
