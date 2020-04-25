@@ -18,7 +18,10 @@ export BeeInt,
     constrain, 
     @constrain, 
     solve,
-    reset
+    hasvar,
+    hasbool,
+    hasint,
+    fetchbool
 
 # -------------------------------------------------------------
 # abstract types
@@ -55,7 +58,7 @@ struct BeeInt <: BeeInteger
     end
 end
 
-BeeInt(name::String, lo::Int, hi::Int) = BeeInt(gblmodel, name, lo, hi)
+BeeInt(name::String, lo::Int, hi::Int) = BeeInt(GBL_MODEL, name, lo, hi)
 BeeInt(name::Symbol, lo, hi) = BeeInt(string(name), lo, hi)
 
 macro beeint(name, lo, hi) 
@@ -79,7 +82,12 @@ macro beeint(name, lo, hi)
     end
     q
 end
-beeint(name, lo, hi) = BeeInt(name, lo, hi)
+
+"Create an integer varaible called `name` in `GBL_MODEL`"
+beeint(name, lo, hi) = beeint(GBL_MODEL, name, lo, hi)
+
+"Create an integer varaible called `name` in `GBL_MODEL`"
+beeint(model, name, lo, hi) = BeeInt(model, name, lo, hi)
 
 render(io::IO, var::BeeInt) = print(io, "new_int($var, $(var.lo), $(var.hi))\n")
 
@@ -99,7 +107,7 @@ struct BeeBool <: BeeBoolean
         model.booldict[name] = var
     end
 end
-BeeBool(name::String) = BeeBool(gblmodel, name)
+BeeBool(name::String) = BeeBool(GBL_MODEL, name)
 BeeBool(name::Symbol) = BeeBool(string(name))
 
 function escvar(var) 
@@ -141,8 +149,12 @@ macro beebool(namelist...)
     push!(q.args, ret) # return all of the variables we created
     q
 end
-beebool(name) = BeeBool(name)
 
+"Create a boolean varaible called `name` in `GBL_MODEL`"
+beebool(name) = beebool(GBL_MODEL, name)
+
+"Create a boolean varaible called `name` in `model`"
+beebool(model, name) = BeeBool(model, name)
 
 render(io::IO, var::BeeBool) = print(io, "new_bool($var)\n")
 
@@ -245,7 +257,32 @@ show(io::IO, ::MIME"text/plain", m::BeeModel) = print(io,
 * Boolean variables: $(collect(values(m.booldict)))
 * Constraint: $(m.conslist)""")
 
+"Check if the model has a variable called `name`"
 hasvar(model::BeeModel, name::String) = haskey(model.intdict, name) || haskey(model.booldict, name)
+
+"Check if the model has a bollean variable called `name` in `model`"
+hasbool(model::BeeModel, name) = haskey(model.booldict, name)
+
+"Check if the model has a bollean variable called `name` in `GBL_MODEL`"
+hasbool(name) = hasbool(GBL_MODEL, name)
+
+"Check if the model has a integer variable called `name` in `model`"
+hasint(model::BeeModel, name) = haskey(model.intdict, name)
+
+"Check if the model has a integer variable called `name` in `GBL_MODEL`"
+hasint(name) = hasint(GBL_MODEL, name)
+
+"Either create or retrive an existing boolean variable called `name` in `model`"
+function fetchbool(model::BeeModel, name) 
+    if hasbool(model, name)
+        model.booldict[name]
+    else
+        beebool(model, name)
+    end
+end
+
+"Either create or retrive an existing boolean variable called `name` in `GBL_MODEL`"
+fetchbool(name) = fetchbool(GBL_MODEL, name)
 
 """
     constrain(model, cons)
@@ -257,17 +294,17 @@ function constrain(model::BeeModel, cons::BeeConstraint)
     push!(model.conslist, cons)
     cons
 end
-constrain(cons) = constrain(gblmodel, cons)
+constrain(cons) = constrain(GBL_MODEL, cons)
 
 macro constrain(cons)
     :(constrain($(esc(cons))))
 end
 
-"Render the global model `gblmodel` to BEE syntax and print it to `stdout`."
-render() = render(Base.stdout, gblmodel)
+"Render the global model `GBL_MODEL` to BEE syntax and print it to `stdout`."
+render() = render(Base.stdout, GBL_MODEL)
 
-"Render the global model `gblmodel` to BEE syntax and print it to `io`."
-render(io::IO) = render(io, gblmodel)
+"Render the global model `GBL_MODEL` to BEE syntax and print it to `io`."
+render(io::IO) = render(io, GBL_MODEL)
 
 function render(io::IO, model::BeeModel)
     for intv in values(model.intdict)
@@ -284,7 +321,7 @@ end
 
 "Delete all variables and constraints from the default model."
 function reset()
-    global gblmodel = BeeModel("defaul model")
+    global GBL_MODEL = BeeModel("defaul model")
 end
 
 # -------------------------------------------------------------
@@ -346,7 +383,7 @@ function solve(model::BeeModel, io::IO)
 end
 
 " Solve the default model and print the solution to `stdout`."
-solve() = solve(gblmodel, Base.stdout)
+solve() = solve(GBL_MODEL, Base.stdout)
 
 show(io::IO, ::MIME"text/plain", sol::BeeSolution) = print(io, 
 """

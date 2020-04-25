@@ -58,8 +58,16 @@ end
         x2 = beebool("x2")
         @test "new_bool(x2)\n" == capture_render(x2)
 
-        x3 = beebool(:x3)
+        x3 = beebool("x3")
         @test "new_bool(x3)\n" == capture_render(x3)
+
+        @test hasbool("x3")
+        @test !hasbool("x4")
+
+        x5 = fetchbool("x5")
+        @test isa(x5, BeeBool)
+        @test x5.name == "x5"
+        @test x5 === fetchbool("x5")
 
         yl = @beebool y1 y2 y3
         for i in 1:3
@@ -86,6 +94,10 @@ end
         for i in 1:10
             @test "new_int(i$i, 3, 7)\n" == capture_render(il[i])
         end
+
+        @test hasint("i4")
+
+        @test !hasint("i12")
     end
 
     @testset "Boolean statements" begin
