@@ -1,4 +1,4 @@
-# Using `BEE` 🐝️ and `BeeEncoder.jl` to solve SAT problems
+# Using `BEE` and `BeeEncoder.jl` 🐝️ to solve SAT problems
 
 [![Build Status](https://travis-ci.org/newptcai/BeeEncoder.jl.svg?branch=master)](https://travis-ci.org/newptcai/BeeEncoder.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
