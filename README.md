@@ -85,17 +85,18 @@ end.
 ### Docker image
 
 The easiest way to try `BEE` and `BeeEncoder.jl` is to use this [docker
-image](https://hub.docker.com/r/newptcai/bee) with everything you need. 
+image](https://hub.docker.com/r/newptcai/beeencoder) with everything you need. 
 If you have [docker](https://www.docker.com/) install, simply type in a terminal
 ```shell
-docker pull newptcai/bee
-docker run -it newptcai/bee
+docker pull newptcai/beeencoder
+docker run -it newptcai/beeencoder
 ```
 This will download and start a bash shell within the image.  You will find `BEE` install in the
 folder `/bee`.  To check it works, run
 ```shell
 cd bee && ./BumbleBEE beeSolver/bExamples/ex_sat.bee
 ```
+`BeeEncoder.jl` is also included in this image. You can start Julia REPL and use it immediately.
 
 The drawback of this method is that the image is quite large (about 600MB). This is unavoidable if we
 use docker. Julia itself needs about 400MB, and Prolog costs another 100MB. 😑️
