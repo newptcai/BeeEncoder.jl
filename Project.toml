@@ -1,15 +1,14 @@
-name = "BEE"
+name = "BeeEncoder"
 uuid = "88bd2ba4-b024-4779-b1f7-c7f148753aae"
 authors = ["Xing Shi Cai <newptcai@gmail.com>"]
-version = "1.0.0"
+version = "0.0.1"
 
 [deps]
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 
 [compat]
-julia = "1"
 Suppressor = "0.2.0"
-
+julia = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

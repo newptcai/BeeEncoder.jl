@@ -1,6 +1,6 @@
-# A simple example to use `BEE.jl`
+# A simple example to use `BeeEncoder.jl`
 
-using BEE
+using BeeEncoder
 
 @beeint x  0 5
 @beeint y -4 9
@@ -17,4 +17,4 @@ xl = @beebool x[1:4]
 
 @constrain sum([-xl[1], xl[2], -xl[3], xl[4]]) == w
 
-BEE.render()
+BeeEncoder.render()

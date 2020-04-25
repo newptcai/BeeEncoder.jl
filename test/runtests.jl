@@ -1,4 +1,4 @@
-using BEE
+using BeeEncoder
 using Suppressor
 using Test
 
@@ -10,9 +10,9 @@ function capture_render()
     @capture_out render()
 end
 
-@testset "BEE.jl" begin
+@testset "BeeEncoder.jl" begin
     @testset "simple" begin
-        BEE.reset()
+        BeeEncoder.reset()
 
         example="""new_int(w, 0, 10)
         new_int(x, 0, 5)
@@ -39,18 +39,18 @@ end
         c = xl[1] == -xl[2]
         @test "bool_eq(x1, -x2)\n" == capture_render(c)
 
-        BEE.reset()
+        BeeEncoder.reset()
         @constrain xl[1] == -xl[2]
         @test "bool_eq(x1, -x2)\nsolve satisfy\n" == capture_render()
 
-        BEE.reset()
+        BeeEncoder.reset()
         constrain(xl[1] == -xl[2])
         @test "bool_eq(x1, -x2)\nsolve satisfy\n" == capture_render()
 
     end
 
     @testset "Declaring Variable" begin
-        BEE.reset()
+        BeeEncoder.reset()
 
         @beebool x1
         @test "new_bool(x1)\n" == capture_render(x1)
@@ -76,7 +76,7 @@ end
             @test "new_bool(c$i)\n" == capture_render(cl[i])
         end
 
-        BEE.reset()
+        BeeEncoder.reset()
 
         @beeint xx 3 55
 
@@ -89,7 +89,7 @@ end
     end
 
     @testset "Boolean statements" begin
-        BEE.reset()
+        BeeEncoder.reset()
 
         @beebool x1
         @beebool x2
@@ -107,12 +107,12 @@ end
         c = and([x1, x2]) == -x3
         @test "bool_array_and_reif([x1, x2], -x3)\n" == capture_render(c)
 
-        c = -x3 == BEE.xor(-x1, x2)
+        c = -x3 == BeeEncoder.xor(-x1, x2)
         @test "bool_xor_reif(-x1, x2, -x3)\n" == capture_render(c)
     end
 
     @testset "Integer statements" begin
-        BEE.reset()
+        BeeEncoder.reset()
 
         @beeint x1 3 7
         @beeint x2 4 6
@@ -162,7 +162,7 @@ end
     end
 
     @testset "Cardinality" begin
-        BEE.reset()
+        BeeEncoder.reset()
 
         xl = [beebool("x$i") for i in 1:3]
 
@@ -179,7 +179,7 @@ end
     end
 
     @testset "Boolean arrays relation" begin
-        BEE.reset()
+        BeeEncoder.reset()
 
         xl = [beebool("x$i") for i in 1:3]
 

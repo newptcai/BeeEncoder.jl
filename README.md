@@ -1,13 +1,11 @@
-# Using `BEE` and `BEE.jl` to solve combinatorial problems
+# Using `BEE` 🐝️ and `BeeEncoder.jl` to solve SAT problems
 
-[![Build Status](https://travis-ci.org/newptcai/BEE.jl.svg?branch=master)](https://travis-ci.org/newptcai/BEE.jl)
+[![Build Status](https://travis-ci.org/newptcai/BeeEncoder.jl.svg?branch=master)](https://travis-ci.org/newptcai/BeeEncoder.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/256705444.svg)](https://zenodo.org/badge/latestdoi/256705444)
-[![codecov](https://codecov.io/gh/newptcai/BEE.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/newptcai/BEE.jl)
+[![codecov](https://codecov.io/gh/newptcai/BeeEncoder.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/newptcai/BeeEncoder.jl)
 
-*This article is about my Julia interface package [`BEE.jl`](https://github.com/newptcai/BEE.jl) for
-using [`BEE` (Ben-Gurion University Equi-propagation
-Encoder)](http://amit.metodi.me/research/bee/) by [Amit Metodi](http://amit.metodi.me/)*
+*This package was originally named [`BEE.jl`](https://github.com/newptcai/BEE.jl).  The name was
+changed so it can be registered in Julia's package repository. *
 
 ## The beauty of brute force 🤜️
 
@@ -61,18 +59,18 @@ From my experiments, `BEE` has a good balance of expressive power and performanc
    SAT solvers out there.
 
 My choice is to use [Julia](https://julialang.org/) to convert combinatorics problems into
-`BumbleBEE` code and this is why I wrote the package [`BEE.jl`](https://github.com/newptcai/BEE.jl).
+`BumbleBEE` code and this is why I wrote the package [`BeeEncoder.jl`](https://github.com/newptcai/BeeEncoder.jl).
 
 Here's my workflow for smaller problems
 
 ```shell
-Julia code --(BEE.jl)--> BEE code --(BumbleBEE)--> solution/unsatisfiable
+Julia code --(BeeEncoder.jl)--> BEE code --(BumbleBEE)--> solution/unsatisfiable
 ```
 
 When the problem is getting bigger, I try
 
 ```shell
-Julia code --(BEE.jl)--> BEE code -- (BumbleBEE)--> CNF --(SAT Solver)
+Julia code --(BeeEncoder.jl)--> BEE code -- (BumbleBEE)--> CNF --(SAT Solver)
                                                                |
     +-------------------------+--------------------------------+
     |                         |
@@ -81,14 +79,14 @@ unsatisfiable          CNF solution --(BumbleSol)--> BEE solution
 ```
 
 In the rest of this article, I will mostly describe how to use `BEE` 😀️. You do not need to know any
-Julia to understand this part. I will only briefly mention what `BEE.jl` does by the
+Julia to understand this part. I will only briefly mention what `BeeEncoder.jl` does by the
 end.
 
 ## `BEE` and SAT solver for beginners
 
 ### Docker image
 
-The easiest way to try `BEE` and `BEE.jl` is to use this [docker
+The easiest way to try `BEE` and `BeeEncoder.jl` is to use this [docker
 image](https://hub.docker.com/r/newptcai/bee) with everything you need. 
 If you have [docker](https://www.docker.com/) install, simply type in a terminal
 ```shell
@@ -307,19 +305,19 @@ Some top-level SAT solvers are
 My experience is that all these SAT solvers have similar performance. It is always more important to
 try to encode your problem better.
 
-## How to use `BEE.jl`
+## How to use `BeeEncoder.jl`
 
 When your problems becomes bigger, you don't want to write all `BEE` code manually. Here's what
-`BEE.jl` may help. You can write your problem in Julia, and `BEE.jl` will convert it to `BEE` syntax.
-Here's how to do the example above with `BEE.jl`
+`BeeEncoder.jl` may help. You can write your problem in Julia, and `BeeEncoder.jl` will convert it to `BEE` syntax.
+Here's how to do the example above with `BeeEncoder.jl`
 
-First install `BEE.jl` by typing this in `Julia REPL`.
+First install `BeeEncoder.jl` by typing this in `Julia REPL`.
 ```Julia
-using Pkg; Pkg.add("git@github.com:newptcai/BEE.jl.git")
+using Pkg; Pkg.add("git@github.com:newptcai/BeeEncoder.jl.git")
 ```
 Then run the following code in Julia REPL
 ```Julia
-using BEE
+using BeeEncoder
 
 @beeint x  0 5
 @beeint y -4 9
