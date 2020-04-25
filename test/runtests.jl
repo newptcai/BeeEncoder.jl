@@ -2,14 +2,6 @@ using BeeEncoder
 using Suppressor
 using Test
 
-function capture_render(c)
-    @capture_out render(c)
-end
-
-function capture_render()
-    @capture_out render()
-end
-
 @testset "BeeEncoder.jl" begin
     @testset "simple" begin
         BeeEncoder.reset()

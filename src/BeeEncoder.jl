@@ -2,6 +2,8 @@ module BeeEncoder
 
 import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert
 
+using Suppressor
+
 export BeeInt, 
     BeeBool, 
     BeeModel, 
@@ -24,7 +26,8 @@ export BeeInt,
     fetchbool,
     getbool,
     getint,
-    GBL_MODEL
+    GBL_MODEL,
+    capture_render
 
 # -------------------------------------------------------------
 # abstract types
@@ -688,5 +691,16 @@ end
 # -------------------------------------------------------------
 
 reset()
+
+# -------------------------------------------------------------
+# For testing
+# -------------------------------------------------------------
+function capture_render(c)
+    @capture_out render(c)
+end
+
+function capture_render()
+    @capture_out render()
+end
 
 end
