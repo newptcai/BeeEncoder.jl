@@ -38,7 +38,6 @@ using Test
         BeeEncoder.reset()
         constrain(xl[1] == -xl[2])
         @test "bool_eq(x1, -x2)\nsolve satisfy\n" == capture_render()
-
     end
 
     @testset "Declaring Variable" begin
@@ -62,11 +61,12 @@ using Test
         @test x5 === fetchbool("x5")
 
         @test x5 === getbool("x5")
-        try
-            getbool("x6")
-        catch e
-            @test e isa KeyError
-        end
+        @test_throws KeyError getbool("x6")
+
+        xx1 = fetchbool("xx")
+        xx2 = fetchbool("xx")
+
+        @test isequal(xx1, xx2)
 
         yl = @beebool y1 y2 y3
         for i in 1:3
@@ -87,6 +87,8 @@ using Test
 
         @beeint xx 3 55
 
+        @test isequal(xx, xx)
+
         @test "new_int(xx, 3, 55)\n" == capture_render(xx)
 
         il = @beeint i[1:10] 3 7
@@ -101,12 +103,7 @@ using Test
         @test !hasint("i12")
 
         @test xx === getint("xx")
-        try
-            getint("x6")
-        catch e
-            @test e isa KeyError
-        end
-
+        @test_throws KeyError getint("x6")
     end
 
     @testset "Boolean statements" begin
