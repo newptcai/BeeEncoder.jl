@@ -1,6 +1,6 @@
 module BeeEncoder
 
-import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert, isequal
+import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert, isequal, in
 
 using Suppressor
 
@@ -43,8 +43,18 @@ abstract type BeeInteger <: BeeSymbol end
 BB = Union{BeeBoolean, Bool}
 ZZ = Union{BeeInteger, Int}
 
-"`isequal` allows using `BeeSymbol` comparing them for `Dict` etc."
+"Reload `isequal` to allow using `BeeSymbol` comparing them for `Dict`."
 isequal(v1::BeeSymbol, v2::BeeSymbol) = v1 === v2
+
+"Reload `in` to allow checking if a `BeeSymbol` is in an array"
+function in(v::T, vs::Array{T,1}) where T <: BeeSymbol
+    for s in vs
+        if v === s
+            return true
+        end
+    end
+    false
+end
 
 # -------------------------------------------------------------
 # BEE integer variable

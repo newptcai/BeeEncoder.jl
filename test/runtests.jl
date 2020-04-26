@@ -78,6 +78,9 @@ using Test
             @test "new_bool(z$i)\n" == capture_render(zl[i])
         end
 
+        z1 = fetchbool("z1")
+        @test z1 in zl
+
         (a, b, cl, d) = @beebool a b c[1:10] d
         for i in 1:10
             @test "new_bool(c$i)\n" == capture_render(cl[i])
@@ -97,6 +100,9 @@ using Test
         end
 
         @test "[i1, i2, i3]" == capture_render(il[1:3])
+
+        i1 = getint("i1")
+        @test i1 in il
 
         @test hasint("i4")
 
