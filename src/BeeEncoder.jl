@@ -7,6 +7,7 @@ using Suppressor
 export BeeInt, 
     BeeBool, 
     BeeModel, 
+    BeeSolution,
     @beeint, 
     @beebool, 
     beeint, 
