@@ -370,7 +370,7 @@ struct BeeSolution
 end
 
 "Call `BumbleBEE` to solve the `model` and print the output into `io`"
-function solve(model::BeeModel, io::IO)
+function solve(model::BeeModel, io::IO, deletefile=true)
     # Find where is BumbleBEE
     beepath = Sys.which("BumbleBEE")
     beedir = dirname(beepath)
@@ -381,11 +381,20 @@ function solve(model::BeeModel, io::IO)
         render(io)
     end
 
+    tempout = tempname() * ".sol"
+
     # Solve with BumbleBEE
     curdir = pwd()
     cd(beedir)
-    output = read(`./BumbleBEE $tempf`, String)
+    println(tempout)
+    run(pipeline(`./BumbleBEE $tempf`, stdout=tempout))
+    output = readlines(tempout)
     cd(curdir)
+
+    if deletefile
+        rm(tempf)
+        rm(tempout)
+    end
 
     # filter comments
     rc = r"^%"
@@ -398,7 +407,7 @@ function solve(model::BeeModel, io::IO)
     intdict = Dict{String, Int}()
     booldict = Dict{String, Bool}()
 
-    for line in split(output, "\n")
+    for line in output
         println(io, line)
         if match(runsat, line) !== nothing
             sat = false
@@ -413,13 +422,14 @@ function solve(model::BeeModel, io::IO)
             booldict[name] = parse(Bool, val)
         end
     end
-    rm(tempf)
 
     BeeSolution(sat, intdict, booldict)
 end
 
 " Solve the default model and print the solution to `stdout`."
 solve() = solve(GBL_MODEL, Base.stdout)
+
+solve(deletefile::Bool) = solve(GBL_MODEL, Base.stdout, deletefile)
 
 show(io::IO, ::MIME"text/plain", sol::BeeSolution) = print(io, 
 """
