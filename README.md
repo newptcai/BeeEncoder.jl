@@ -312,7 +312,7 @@ Here's how to do the example above with `BeeEncoder.jl`
 
 First install `BeeEncoder.jl` by typing this in `Julia REPL`.
 ```Julia
-using Pkg; Pkg.add("git@github.com:newptcai/BeeEncoder.jl.git")
+using Pkg; Pkg.add("BeeEncoder")
 ```
 Then run the following code in Julia REPL
 ```Julia
@@ -353,7 +353,8 @@ solve satisfy
 ```
 Exactly as above.
 You can solve this into a file and solve it with `BumbleBEE` as I described before.
-Or assuming that `BumbleBEE` can be found through your `PATH` environment variable, then you can run
+
+If you have `BEE` installed and `BumbleBEE` can be found through your `PATH` environment variable, then you can run
 `BEE.solve()` directly in Julia and get the solution, like this.
 ```Julia
 julia> output = solve();
@@ -384,6 +385,7 @@ BEE solution:
 * Integer variables: Dict("w" => 2,"x" => 0,"z" => -4,"y" => -4)
 * Boolean variables: Dict{String,Bool}("x1" => 0,"x4" => 0,"x2" => 1,"x3" => 1)
 ```
+To reset the model, use `reset()`.
 
 ## Acknowledgement 🙏️
 
@@ -395,3 +397,5 @@ features.  I want to thank everyone 💁 on GitHub and [Julia Slack channel](htt
 particular Alex Arslan, [David Sanders](https://github.com/dpsanders), Syx Pek, and [Jeffrey
 Sarnoff](https://github.com/JeffreySarnoff).
 
+I also want to thank my dear friend [Yelena Yuditsky](https://sites.google.com/view/yuditsky/home) for
+giving me a problem to solve so that I have the motivation to do all this.
