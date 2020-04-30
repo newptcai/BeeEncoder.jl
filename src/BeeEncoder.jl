@@ -5,29 +5,16 @@ import Base: -, +, *, /, mod, max, min, ==, <, <=, !=, >, >=, sum, show, convert
 using Suppressor
 
 export BeeInt, 
-    BeeBool, 
-    BeeModel, 
-    BeeSolution,
-    @beeint, 
-    @beebool, 
-    beeint, 
-    beebool, 
-    render, 
-    reset, 
-    and, 
-    or, 
-    iff, 
-    alldiff, 
-    constrain, 
-    @constrain, 
-    solve,
-    hasvar,
-    hasbool,
-    hasint,
-    fetchbool,
-    getbool,
-    getint,
-    GBL_MODEL,
+    BeeBool, BeeModel, BeeSolution, GBL_MODEL,
+
+    @beeint, @beebool, beeint, beebool, 
+    
+    boolnum, intnum, hasvar, hasbool, hasint, fetchbool, getbool, getint,
+
+    render, reset, solve,
+
+    constrain, @constrain, and, or, iff, alldiff, 
+
     capture_render
 
 # -------------------------------------------------------------
@@ -319,6 +306,12 @@ getbool(model, name) = model.booldict[name]
 
 "Retrive an existing boolean variable called `name` in `GBL_MODEL`"
 getbool(name) = getbool(GBL_MODEL, name)
+
+"Return the number of boolean variables in `GBL_MODEL`"
+boolnum() = length(GBL_MODEL.booldict)
+
+"Return the number of integer variables in `GBL_MODEL`"
+intnum() = length(GBL_MODEL.intdict)
 
 """
     constrain(model, cons)
